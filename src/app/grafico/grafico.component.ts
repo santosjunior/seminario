@@ -72,6 +72,9 @@ export class GraficoComponent implements OnInit {
     let prazo = [];
     let porcento = [];
     let p = 0;
+    let dias = [];
+    let pos = 0;
+    let porcentoAnterior = 0;
     for (let i = 0; i <= 100; i = i + (100/this.prazoProjeto)){
       lista.push(i)
     }
@@ -79,9 +82,41 @@ export class GraficoComponent implements OnInit {
       prazo.push(i);
     }
     porcento.push(0);
-    for (let pontos of this.listaPontos){      
-      p = p + pontos.porcento
-      porcento.push(p);
+    
+    for (let pontos of this.listaPontos){
+      if(pontos.dia > porcento.length && porcento.length !== 0){
+        console.log('dia '+pontos.dia)
+        console.log('tamanho '+porcento.length)
+        console.log(porcento[porcento.length-1])
+        porcento.push(porcento[porcento.length-1])
+      }     
+        p = p + pontos.porcento
+        console.log('dia = 0 '+p)
+        porcento.push(p);
+       
+         
+          for(let dia of dias){
+            console.log('dia '+ dia)
+            console.log('dias '+ dias)
+            console.log('antes do if '+porcento)
+            if(dia === pontos.dia && dia != 0){
+              console.log('entrou')
+              console.log('passando pelo if '+porcento)
+              porcentoAnterior = p;              
+              pos = porcento.map(elem => elem).indexOf(porcentoAnterior);
+              porcento.splice(pos-1, 1);              
+              console.log('passou pelo splice '+porcento)              
+              console.log('terminou o if '+porcento)
+            }            
+            
+          }
+          if(dias.indexOf(pontos.dia) < 0){
+            dias.push(pontos.dia);
+          }
+          
+                
+             
+      
     }
     
     const ctx = document.getElementById('grafico');
@@ -100,7 +135,7 @@ export class GraficoComponent implements OnInit {
         label: 'Estado Atual',
         data: porcento,
         borderWidth: 6,
-        borderColor: 'rgba(63,140,191,0.85)',
+        borderColor: 'rgba(63,191,84,0.85)',
         backgroundColor: 'transparent'
       }
     ]
@@ -161,8 +196,15 @@ export class GraficoComponent implements OnInit {
   }
 
   concluirAtividade(atividade: Atividade){
+    const atualizarAtividade = new Atividade();
+    atualizarAtividade.nome = atividade.nome;
+    atualizarAtividade.importancia = atividade.importancia;
+    atualizarAtividade.concluida = true;
     this.ativarConclusao = true;
     this.atividade = atividade
+    const pos = this.atividades.map(elem => elem.nome).indexOf(atividade.nome);
+    this.atividades.splice(pos, 1);
+    this.atividades.push(atualizarAtividade);
   }
 
   

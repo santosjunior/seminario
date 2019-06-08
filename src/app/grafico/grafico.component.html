@@ -72,7 +72,8 @@
                     <form class="form-inline" [formGroup]="pontosForm" (submit)="addPontos(pontosForm.value)">
                       <input type="Number" class="form-control mr-3" formControlName="dia" placeholder="Dia de Conclusão">
                       <input type="Number" class="form-control mr-3" value="{{ atividade.importancia }}" readonly>
-                      <button type="submit"class="btn btn-success">Confirmar</button>
+                      <button type="submit"class="btn btn-success mr-2">Confirmar</button>
+                      <button type="button" class="btn btn-danger" (click)="ativarConclusao = false">Cancelar</button>
                     </form>
                   </td>
                 </tr>
