@@ -1,0 +1,161 @@
+<br>
+<div class="container-fluid">
+  <div id="accordion">
+    <!-- Criação de Projeto -->
+    <div class="card">
+      <div class="card-header" id="headingOne">   
+        <h5 class="mb-0">
+          <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Gerenciamento de Projeto
+          </button>  
+        </h5>         
+      </div>
+      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+        <div class="card-body">
+
+          <!-- Exibi o Formulário de criação do projeto -->
+          <div class="container-fluid" *ngIf="exibirFormProjeto">
+            <h5>Criação de Projeto</h5>
+            <br>
+            <form [formGroup]="projetoForm" (submit)="addProjeto(projetoForm.value)">
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="nome" placeholder="Nome do Projeto" >
+              </div>
+              <div class="form-group">
+                  <input type="Number" class="form-control" formControlName="prazo" placeholder="Prazo para conclusão do projeto">
+              </div>
+              <button type="submit" class="btn btn-primary">Salvar Projeto</button>
+            </form>
+          </div>
+
+          <!-- Exibi o Formulário de Atividades -->
+          <div class="container-fluid" *ngIf="exibirFormAtividades">
+              <h5>Adicionar Atividades</h5>
+              <br>
+              <form [formGroup]="atividadeForm" (submit)="addAtividade(atividadeForm.value)">
+                <div class="form-group">
+                  <input type="text" formControlName="nome" class="form-control" placeholder="Atividade">
+                </div>
+                <div class="form-group">
+                    <input type="Number" formControlName="importancia" class="form-control" placeholder="Porcentagem da Atividade em relação ao projeto">
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">Adicionar</button>
+                <button type="button" class="btn btn-success" (click)="ListaAtivi()">Ir para Lista de Atividades</button>
+              </form>
+          </div>
+
+          <!-- Exibi Lista de Atividades -->
+          <div class="container-fluid" *ngIf="exibirListaAtividades">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Atividade</th>
+                  <th scope="col">Importancia</th>
+                  <th scope="col">Situação</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="!ativarConclusao">
+                <tr *ngFor="let at of atividades">
+                  <td>{{ at.nome }}</td>
+                  <td>{{ at.importancia }}%</td>
+                  <td *ngIf="at.concluida">Concluída</td>
+                  <td *ngIf="!at.concluida">Pendente</td>
+                  <td *ngIf="!at.concluida">
+                    <button type="button" class="btn btn-info" (click)="concluirAtividade(at)">Concluir Tarefa</button>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody *ngIf="ativarConclusao">
+                <tr>
+                  <td colspan="3">
+                    <form class="form-inline" [formGroup]="pontosForm" (submit)="addPontos(pontosForm.value)">
+                      <input type="Number" class="form-control mr-3" formControlName="dia" placeholder="Dia de Conclusão">
+                      <input type="Number" class="form-control mr-3" value="{{ atividade.importancia }}" readonly>
+                      <button type="submit"class="btn btn-success">Confirmar</button>
+                    </form>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+            <br>
+            <button type="button" class="btn btn-info" (click)="gerar()" *ngIf="!ativarConclusao">Visualizar Gráfico</button>
+          </div>
+
+          <!-- Exibi o Grafico -->
+          <div class="container-fluid" >            
+            <canvas id="grafico" >{{ grafico }}</canvas> 
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- Calcular Distância entre 2 Pontos no Plano -->
+
+    <div class="card">   
+      <div class="card-header" id="headingTwo">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Calcular distância entre 2 pontos
+          </button>
+        </h5>
+      </div>
+      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+        <div class="card-body">
+          <form [formGroup]="distanciaForm" (submit)="distancia(distanciaForm.value)">
+            <div class="form-group">
+              <input type="text" class="form-control" formControlName="x1" placeholder="x1">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" formControlName="x2" placeholder="x2">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" formControlName="y1" placeholder="y1">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" formControlName="y2" placeholder="y2">  
+            </div>
+            <button type="submit" class="btn btn-info" >Calcular</button>
+          </form>
+          <br>
+          <p *ngIf="dist != null">Distância = {{ dist }}</p> 
+        </div>
+      </div>      
+    </div> 
+
+    <!-- Calcular Coeficiente Angular -->
+
+    <div class="card">
+      <div class="card-header" id="headingThree">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            Calcular Coeficiente Angular
+          </button>
+        </h5>
+      </div>
+    </div>
+    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+      <div class="card-body">
+        <form [formGroup]="coeficienteForm" (submit)="coeficienteAngular(coeficienteForm.value)">
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="y2" placeholder="y2">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="y1" placeholder="y1">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="x2" placeholder="x2">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="x1" placeholder="x1">
+          </div>
+          <button type="submit" class="btn btn-info" >Calcular</button>
+        </form>
+        <p *ngIf="coefAngular != null">Coeficiente Angular = {{ coefAngular }}</p> 
+      </div>
+    </div>
+  </div>
+</div>
+
